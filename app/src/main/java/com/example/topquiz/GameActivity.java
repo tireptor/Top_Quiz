@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,7 +11,6 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +27,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     private Button mButton2;
     private Button mButton3;
     private Button mButton4;
-    private final QuestionBank mQuestionBank = generateQuestionBank();
+    private QuestionBank mQuestionBank = generateQuestionBank();
     private int mRemainingQuestionCount;
     private Question mCurrentQuestion;
     private int mScore;
@@ -37,7 +35,7 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
     public static final String TAG = "Vincent";
     public static final String BUNDLE_STATE_SCORE = "BUNDLE_STATE_SCORE";
     public static final String BUNDLE_STATE_QUESTION = "BUNDLE_STATE_QUESTION";
-
+    public static final String BUNDLE_STATE_QUESTION_BANK = "BUNDLE_STATE_QUESTION_BANK";
     private boolean mEnableTouchEvents;
 
     @Override
@@ -89,7 +87,10 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         if (savedInstanceState != null) {
             mScore = savedInstanceState.getInt(BUNDLE_STATE_SCORE);
             mRemainingQuestionCount = savedInstanceState.getInt(BUNDLE_STATE_QUESTION);
-            mCurrentQuestion = mQuestionBank.getNextQuestion();
+
+            mQuestionBank = (QuestionBank) savedInstanceState.getParcelable(BUNDLE_STATE_QUESTION_BANK);
+            mCurrentQuestion = mQuestionBank.getQuestion();
+
         } else {
             mScore = 0;
             mRemainingQuestionCount = 4;
@@ -104,6 +105,8 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
 
         outState.putInt(BUNDLE_STATE_SCORE, mScore);
         outState.putInt(BUNDLE_STATE_QUESTION, mRemainingQuestionCount);
+        outState.putParcelable(BUNDLE_STATE_QUESTION_BANK,mQuestionBank);
+       // myIntent.putExtra("student", new Student(1,"Mike","6")); //size which you are storing
     }
 
 
@@ -164,8 +167,6 @@ public class GameActivity extends AppCompatActivity implements View.OnClickListe
         mButton2.setText(choiceList.get(1));
         mButton3.setText(choiceList.get(2));
         mButton4.setText(choiceList.get(3));
-
-
     }
 
     private void endGame(){
